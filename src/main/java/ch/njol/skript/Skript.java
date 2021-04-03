@@ -214,6 +214,10 @@ public final class Skript extends JavaPlugin implements Listener {
 	public static ServerPlatform getServerPlatform() {
 		if (classExists("net.glowstone.GlowServer")) {
 			return ServerPlatform.BUKKIT_GLOWSTONE; // Glowstone has timings too, so must check for it first
+		} else if (classExists("org.magmafoundation.magma.Magma")) {
+			return ServerPlatform.BUKKIT_MAGMA; // Magma has timings too, so must check for it first
+		} else if (classExists("com.mohistmc.MohistMC")) {
+			return ServerPlatform.BUKKIT_MOHIST; // Mohist has timings too, so must check for it first
 		} else if (classExists("co.aikar.timings.Timings")) {
 			return ServerPlatform.BUKKIT_PAPER; // Could be Sponge, but it doesn't work at all at the moment
 		} else if (classExists("org.spigotmc.SpigotConfig")) {

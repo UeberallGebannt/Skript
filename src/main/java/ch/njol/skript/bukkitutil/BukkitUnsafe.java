@@ -36,7 +36,10 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import ch.njol.skript.ServerPlatform;
 import ch.njol.skript.Skript;
 import ch.njol.skript.util.Version;
 
@@ -136,9 +139,14 @@ public class BukkitUnsafe {
 		} else {
 			// If we have correct material map, prefer using it
 			if (preferMaterialMap) {
-				if (id.length() > 9) {
+				// Only change things if Forge is installed
+				if (!Skript.getServerPlatform().forge && id.length() > 9) {
 					assert materialMap != null;
 					return materialMap.get(id.substring(10)); // Strip 'minecraft:' out
+				} else {
+					assert materialMap != null;
+					Material material = materialMap.get(id.startsWith("minecraft:") ? id.substring(10) : id); // Strip 'minecraft:' out
+					if (material != null) return material;
 				}
 			}
 			
@@ -170,8 +178,28 @@ public class BukkitUnsafe {
 			}
 			String data = new String(ByteStreams.toByteArray(is), StandardCharsets.UTF_8);
 			
-			Type type = new TypeToken<Map<String,Material>>(){}.getType();
-			materialMap = new Gson().fromJson(data, type);
+			JsonObject myJsonObject = new Gson().fromJson(data, JsonObject.class);
+			
+			materialMap = new HashMap();
+			
+			for (Map.Entry<String, JsonElement> entry : myJsonObject.entrySet()) {
+				try {
+					String alias = entry.getKey();
+					String materialName = entry.getValue().getAsString();
+					
+					Material material = Material.getMaterial(materialName);
+					materialMap.put(alias, material);
+				}catch (Exception e){
+					Skript.exception(e, "Failed to load Material by alias " + entry.getKey());
+					e.printStackTrace();
+				}
+			}
+			
+			for (Material material : Material.values()) {
+				materialMap.put(material.name().toLowerCase(), material);
+				// Only add ID if Forge is installed
+				if (Skript.getServerPlatform().forge) materialMap.put(String.valueOf(material.getId()), material);
+			}
 		}
 		
 		return true;

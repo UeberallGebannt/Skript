@@ -18,6 +18,7 @@
  */
 package ch.njol.skript.aliases;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.StreamCorruptedException;
@@ -25,10 +26,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -49,12 +52,14 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import ch.njol.skript.ServerPlatform;
 import ch.njol.skript.Skript;
 import ch.njol.skript.bukkitutil.BukkitUnsafe;
 import ch.njol.skript.bukkitutil.ItemUtils;
 import ch.njol.skript.bukkitutil.block.BlockCompat;
 import ch.njol.skript.bukkitutil.block.BlockValues;
 import ch.njol.skript.localization.Message;
+import ch.njol.skript.log.SkriptLogger;
 import ch.njol.skript.variables.Variables;
 import ch.njol.yggdrasil.Fields;
 import ch.njol.yggdrasil.YggdrasilSerializable.YggdrasilExtendedSerializable;
@@ -106,9 +111,21 @@ public class ItemData implements Cloneable, YggdrasilExtendedSerializable {
 		}
 		
 		// Always rewrite material registry, in case some updates got applied to it
-		String content = gson.toJson(materialRegistry.getMaterials());
+		String content = null;
+		// Only set content if Forge is installed
+		if (!Skript.getServerPlatform().forge) content = gson.toJson(materialRegistry.getMaterials());
 		try {
-			Files.write(materialsFile, content.getBytes(StandardCharsets.UTF_8));
+			// Only use StringBuilder if Forge is installed
+			if (!Skript.getServerPlatform().forge) {
+				Files.write(materialsFile, content.getBytes(StandardCharsets.UTF_8));
+			} else {
+				StringBuilder stringBuilder = new StringBuilder("[");
+				for (Material material : Material.values())
+					stringBuilder.append("\"" + material.name() + "\",");
+				stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+				stringBuilder.append("]");
+				Files.write(materialsFile, stringBuilder.toString().getBytes(StandardCharsets.UTF_8));
+			}
 		} catch (IOException e) {
 			Skript.exception(e, "Saving material registry failed!");
 		}

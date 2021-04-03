@@ -52,6 +52,18 @@ public enum ServerPlatform {
 	BUKKIT_GLOWSTONE("Glowstone", true, false),
 	
 	/**
+	 * Magma Minecraft server, which are a combination of Spigot (Paper) and Forge.
+	 * Officially supported by UeberallGebannt.
+	 */
+	BUKKIT_MAGMA("Magma", true, true, true),
+	
+	/**
+	 * Mohist Minecraft server, which are a combination of Spigot (Paper) and Forge.
+	 * Not Officially supported by UeberallGebannt, but it should work.
+	 */
+	BUKKIT_MOHIST("Mohist", true, false, true),
+	
+	/**
 	 * Doesn't work at all currently.
 	 */
 	SPONGE("Sponge", false, false);
@@ -59,6 +71,7 @@ public enum ServerPlatform {
 	public String name;
 	public boolean works;
 	public boolean supported;
+	public boolean forge;
 	
 	/**
 	 * 
@@ -70,5 +83,20 @@ public enum ServerPlatform {
 		this.name = name;
 		this.works = works;
 		this.supported = supported;
+		this.forge = false;
+	}
+	
+	/**
+	 *
+	 * @param name Display name for platform.
+	 * @param works If the platform usually works.
+	 * @param supported If the platform is supported.
+	 * @param forge If the platform is based on Forge.
+	 */
+	ServerPlatform(String name, boolean works, boolean supported, boolean forge) {
+		this.name = name;
+		this.works = works;
+		this.supported = supported;
+		this.forge = forge;
 	}
 }
