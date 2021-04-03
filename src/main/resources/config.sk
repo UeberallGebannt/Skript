@@ -27,6 +27,12 @@
 #
 
 
+# ==== Modded Options ====
+
+print all materials as aliases: true
+# Whether all registered Materials should be printed in an aliases file in order to be used more easily.
+# If you want to use your own aliases (recommended!) disable this so that your file doesn't get overwritten.
+# This option is feature is currently not completely done and needs some work in order to fill in all sub items too.
 
 # ==== General Options ====
 

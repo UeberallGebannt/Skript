@@ -54,6 +54,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import ch.njol.skript.ServerPlatform;
 import ch.njol.skript.Skript;
+import ch.njol.skript.SkriptConfig;
 import ch.njol.skript.bukkitutil.BukkitUnsafe;
 import ch.njol.skript.bukkitutil.ItemUtils;
 import ch.njol.skript.bukkitutil.block.BlockCompat;
@@ -125,10 +126,28 @@ public class ItemData implements Cloneable, YggdrasilExtendedSerializable {
 				stringBuilder.deleteCharAt(stringBuilder.length() - 1);
 				stringBuilder.append("]");
 				Files.write(materialsFile, stringBuilder.toString().getBytes(StandardCharsets.UTF_8));
+				if (SkriptConfig.printAllMaterialsAsAliases.value())
+					writeMaterialAliases();
 			}
 		} catch (IOException e) {
 			Skript.exception(e, "Saving material registry failed!");
 		}
+	}
+	
+	// Forge
+	private static void writeMaterialAliases() throws IOException {
+		File aliasesFolder = new File(Skript.getInstance().getDataFolder(), "aliases");
+		aliasesFolder.mkdirs();
+		File aliasesFile = new File(aliasesFolder, "materials.sk");
+		if (aliasesFile.exists()) aliasesFile.delete();
+		aliasesFile.createNewFile();
+		StringBuilder stringBuilder = new StringBuilder("materials:\n");
+		String alias;
+		for (Material material : Material.values()) {
+			alias = material.name().toLowerCase().replace("_", " ");
+			stringBuilder.append("\t" + alias + " = " + material.getId() + " {Damage=0}\n");
+		}
+		Files.write(Paths.get(aliasesFile.getAbsolutePath()), stringBuilder.toString().getBytes(StandardCharsets.UTF_8));
 	}
 	
 	private final static Message m_named = new Message("aliases.named");

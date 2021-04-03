@@ -66,6 +66,8 @@ public abstract class SkriptConfig {
 	final static Option<String> version = new Option<String>("version", Skript.getVersion().toString())
 			.optional(true);
 	
+	public final static Option<Boolean> printAllMaterialsAsAliases = new Option<Boolean>("print all materials as aliases", false);
+	
 	public final static Option<String> language = new Option<String>("language", "english")
 			.optional(true)
 			.setter(new Setter<String>() {
