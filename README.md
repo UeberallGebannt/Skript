@@ -11,6 +11,40 @@ for prototyping etc.
 This Github fork of Skript is based on Mirreski's improvements which was built
 on Njol's original Skript.
 
+## How to use modded Materials
+If you enable it in the config.sk, all materials will be registered as an alias. Please ***don't edit this file*** as it will be overwritten on startup!
+However this is limited to the main item of a material and not its sub items (ex. WOOL --> only white wool, not red wool).
+
+If you want to add the rest of the items yourself, you have to go to the `aliases` folder and create a new `.sk` file with the following format:
+
+```
+example:
+    alias 1 = 6969 {Damage=0} # The damage basically is the sub ID
+    alias 2 = YOUR_MATERIAL {Damage=0}
+```
+
+Here is an example aliases file for the chisel mod:
+
+```
+chisel:
+    chisel = CHISEL_CHISEL_IRON {Damage=0}
+    cracked basalt = 4101 {Damage=0}
+    weathered basalt bricks = 4101 {Damage=1}
+    cracked basalt bricks = 4101 {Damage=2}
+	...
+```
+
+Here is an example script for the chisel mod:
+
+```
+on leftclick holding chisel:
+    cancel event
+    message "No chiseling allowed here!"
+```
+
+**IMPORTANT!** Skript's material system is weird when it comes to modded items, sometimes you get a completely wrong item if you are using the material instead of its ID. It seems like it's working fine with non sub id items/blocks (ex. the Chisel item) but items/blocks with multiple sub IDs require the use of IDs.
+
+
 ## Requirements
 Skript requires **Spigot** to work. You heard it right, Bukkit does *not* work.
 **Paper**, which is a fork of Spigot, is recommended; it is required for some
