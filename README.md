@@ -12,7 +12,7 @@ This Github fork of Skript is based on Mirreski's improvements which was built
 on Njol's original Skript.
 
 ## How to use modded Materials
-If you enable it in the config.sk, all materials will be registered as an alias. Please ***don't edit this file*** as it will be overwritten on startup!
+If you enable it in the config.sk, all materials will be printed in the `aliases/materials.sk` file and registered as an alias. Please ***don't edit this file*** as it will be overwritten on startup!
 However this is limited to the main item of a material and not its sub items (ex. WOOL --> only white wool, not red wool).
 
 If you want to add the rest of the items yourself, you have to go to the `aliases` folder and create a new `.sk` file with the following format:
